@@ -1,7 +1,7 @@
-<div class="w-full max-w-md space-y-8 rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-xl backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/50 sm:p-10">
+<div class="w-full max-w-md space-y-8 rounded-2xl border-2 border-amber-500/20 bg-white/90 p-8 shadow-2xl backdrop-blur-md dark:border-amber-500/10 dark:bg-slate-900/80 sm:p-10">
     <div class="text-center">
-        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-red-600 shadow-lg shadow-amber-500/20">
-            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 shadow-xl shadow-amber-500/30">
+            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
             </svg>
         </div>
@@ -32,7 +32,7 @@
         </div>
 
         <div>
-            <button type="submit" class="group relative flex w-full justify-center rounded-lg border border-transparent bg-amber-600 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-amber-500/20 transition-all hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-900">
+            <button type="submit" class="group relative flex w-full justify-center rounded-lg border border-transparent bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 text-sm font-bold tracking-wide text-white shadow-lg shadow-amber-500/30 transition-all hover:scale-[1.02] hover:shadow-amber-500/40 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-900">
                 <span wire:loading.remove wire:target="login">Sign in</span>
                 <span wire:loading wire:target="login" class="flex items-center gap-2">
                     <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">

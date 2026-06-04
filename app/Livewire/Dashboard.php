@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\PpeViolation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
@@ -94,6 +95,41 @@ class Dashboard extends Component
     public function cameras(): array
     {
         return PpeViolation::distinct()->orderBy('camera_id')->pluck('camera_id')->toArray();
+    }
+
+    /**
+     * Get violation counts for the last 7 days for charting.
+     *
+     * @return array<string, array<int, mixed>>
+     */
+    #[Computed]
+    public function chartData(): array
+    {
+        $days = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $days->push(now()->subDays($i)->format('Y-m-d'));
+        }
+
+        $counts = PpeViolation::query()
+            ->when($this->cameraFilter, fn ($q) => $q->byCamera($this->cameraFilter))
+            ->when($this->typeFilter, fn ($q) => $q->byType($this->typeFilter))
+            ->where('detected_at', '>=', now()->subDays(6)->startOfDay())
+            ->selectRaw('DATE(detected_at) as date, count(*) as total')
+            ->groupBy('date')
+            ->pluck('total', 'date');
+
+        $chartDates = [];
+        $chartCounts = [];
+
+        foreach ($days as $day) {
+            $chartDates[] = Carbon::parse($day)->format('d M');
+            $chartCounts[] = $counts->get($day, 0);
+        }
+
+        return [
+            'categories' => $chartDates,
+            'data' => $chartCounts,
+        ];
     }
 
     /**

@@ -27,23 +27,25 @@
     {{-- Summary Cards --}}
     <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {{-- Today --}}
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800">
-            <div class="flex items-center justify-between">
-                <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Today</p>
-                <span class="rounded-lg bg-amber-50 p-2 dark:bg-amber-500/10">
-                    <svg class="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="relative overflow-hidden rounded-xl border border-amber-200 bg-gradient-to-br from-amber-400 to-amber-500 p-5 shadow-lg shadow-amber-500/20 dark:border-amber-500/20 dark:from-amber-500/20 dark:to-amber-600/20 dark:shadow-none">
+            <div class="relative z-10 flex items-center justify-between">
+                <p class="text-xs font-bold uppercase tracking-wider text-amber-50 dark:text-amber-400">Today</p>
+                <span class="rounded-lg bg-white/20 p-2 text-white dark:bg-amber-500/10 dark:text-amber-400 backdrop-blur-sm">
+                    <svg class="h-4 w-4 text-white dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </span>
             </div>
-            <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($this->todayCount) }}</p>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-500">violations detected</p>
+            <p class="relative z-10 mt-3 text-4xl font-black text-white dark:text-amber-400">{{ number_format($this->todayCount) }}</p>
+            <p class="relative z-10 mt-1 text-xs font-medium text-amber-100 dark:text-amber-500/70">violations detected</p>
+            
+            <svg class="absolute -bottom-4 -right-4 h-32 w-32 text-white opacity-10 dark:text-amber-500 dark:opacity-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
 
         {{-- This Week --}}
         <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">This Week</p>
-                <span class="rounded-lg bg-blue-50 p-2 dark:bg-blue-500/10">
-                    <svg class="h-4 w-4 text-blue-600 dark:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="rounded-lg bg-amber-50 p-2 dark:bg-amber-500/10">
+                    <svg class="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </span>
             </div>
             <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($this->weekCount) }}</p>
@@ -54,8 +56,8 @@
         <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">This Month</p>
-                <span class="rounded-lg bg-purple-50 p-2 dark:bg-purple-500/10">
-                    <svg class="h-4 w-4 text-purple-600 dark:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002-2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span class="rounded-lg bg-amber-50 p-2 dark:bg-amber-500/10">
+                    <svg class="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002-2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                 </span>
             </div>
             <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($this->monthCount) }}</p>
@@ -66,8 +68,8 @@
         <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Avg Confidence</p>
-                <span class="rounded-lg bg-emerald-50 p-2 dark:bg-emerald-500/10">
-                    <svg class="h-4 w-4 text-emerald-600 dark:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="rounded-lg bg-amber-50 p-2 dark:bg-amber-500/10">
+                    <svg class="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </span>
             </div>
             <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{{ $this->averageConfidence > 0 ? number_format($this->averageConfidence * 100, 1) . '%' : '—' }}</p>
@@ -78,8 +80,8 @@
         <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800">
             <div class="flex items-center justify-between">
                 <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Cameras</p>
-                <span class="rounded-lg bg-cyan-50 p-2 dark:bg-cyan-500/10">
-                    <svg class="h-4 w-4 text-cyan-600 dark:text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="rounded-lg bg-amber-50 p-2 dark:bg-amber-500/10">
+                    <svg class="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </span>
             </div>
             <p class="mt-3 text-3xl font-bold text-slate-900 dark:text-white">{{ $this->activeCameras }}</p>
@@ -148,6 +150,110 @@
             </div>
         </div>
     </div>
+
+    {{-- Trend Chart --}}
+    <div class="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900" wire:ignore>
+        <div class="mb-4 flex items-center justify-between">
+            <div>
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Violation Trends</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Last 7 days</p>
+            </div>
+        </div>
+        <div id="violation-chart" class="-ml-2"></div>
+    </div>
+
+    {{-- Chart Initialization Script --}}
+    @script
+    <script>
+        let chart = null;
+
+        const initChart = () => {
+            const chartData = $wire.chartData;
+            const isDark = true; // Forced Dark Mode
+            
+            const options = {
+                series: [{
+                    name: 'Violations',
+                    data: chartData.data
+                }],
+                chart: {
+                    type: 'area',
+                    height: 300,
+                    fontFamily: 'inherit',
+                    toolbar: { show: false },
+                    animations: { enabled: true },
+                    background: 'transparent'
+                },
+                colors: ['#f59e0b'], // Amber 500
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.05,
+                        stops: [0, 100]
+                    }
+                },
+                dataLabels: { enabled: false },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                xaxis: {
+                    categories: chartData.categories,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: {
+                        style: {
+                            colors: '#94a3b8',
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#94a3b8',
+                        },
+                        formatter: (val) => { return Math.round(val) }
+                    }
+                },
+                grid: {
+                    borderColor: '#334155',
+                    strokeDashArray: 4,
+                    yaxis: { lines: { show: true } },
+                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                },
+                theme: {
+                    mode: 'dark'
+                },
+                tooltip: {
+                    theme: 'dark',
+                    y: {
+                        formatter: function (val) {
+                            return val + " violations"
+                        }
+                    }
+                }
+            };
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            chart = new ApexCharts(document.querySelector("#violation-chart"), options);
+            chart.render();
+        };
+
+        // Initialize when component loads
+        initChart();
+
+        // Listen for data updates
+        $wire.on('chart-updated', () => {
+            initChart();
+        });
+    </script>
+    @endscript
 
     {{-- Recent Violations Feed --}}
     <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
