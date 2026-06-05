@@ -121,8 +121,6 @@
                             </div>
                         </th>
                         <th class="px-5 py-3 font-semibold">Persons</th>
-                        <th class="px-5 py-3 font-semibold">Frame</th>
-                        <th class="px-5 py-3 font-semibold">Inference</th>
                         <th class="px-5 py-3 font-semibold">Image</th>
                         <th class="px-5 py-3"></th>
                     </tr>
@@ -176,8 +174,6 @@
                                 </div>
                             </td>
                             <td class="px-5 py-3 text-center font-medium text-slate-900 dark:text-slate-300">{{ $violation->person_count }}</td>
-                            <td class="px-5 py-3 text-xs font-mono text-slate-600 dark:text-slate-500">{{ $violation->frame_id ?? '—' }}</td>
-                            <td class="px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-500">{{ $violation->inference_time_ms ? number_format($violation->inference_time_ms, 1) . 'ms' : '—' }}</td>
                             <td class="px-5 py-3">
                                 @if ($violation->image_path)
                                     <img src="{{ $violation->imageUrl }}" alt="Capture" class="h-10 w-14 rounded object-cover border border-slate-200 shadow-sm dark:border-slate-700" loading="lazy">
@@ -194,7 +190,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-5 py-12 text-center text-slate-500 dark:text-slate-500">
+                            <td colspan="7" class="px-5 py-12 text-center text-slate-500 dark:text-slate-500">
                                 <svg class="mx-auto mb-3 h-8 w-8 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
                                 No violations found matching your filters
                             </td>
