@@ -5,10 +5,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="PPE Violation Monitoring Dashboard - Real-time safety monitoring">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
+    <!-- PWA Setup -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#f59e0b">
+    <link rel="apple-touch-icon" href="{{ asset('image/logo-header.png') }}">
 
     <title>{{ $title ?? 'Dikemas Ops' }} — Industrial Monitoring</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 
 <body
@@ -195,6 +202,18 @@
             if (window.timeInterval) clearInterval(window.timeInterval);
             window.timeInterval = setInterval(updateTime, 1000);
         });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
     </script>
 </body>
 
