@@ -19,6 +19,24 @@ class ViolationList extends Component
 {
     use WithPagination;
 
+    public int $lastViolationId = 0;
+
+    public function mount(): void
+    {
+        $this->lastViolationId = PpeViolation::max('id') ?? 0;
+    }
+
+    public function checkForNewViolations(): void
+    {
+        $latestId = PpeViolation::max('id') ?? 0;
+
+        if ($latestId > $this->lastViolationId) {
+            $newIds = PpeViolation::where('id', '>', $this->lastViolationId)->pluck('id')->toArray();
+            $this->lastViolationId = $latestId;
+            $this->dispatch('new-violation-alert', newIds: $newIds);
+        }
+    }
+
     #[Url]
     public string $cameraFilter = '';
 
@@ -63,6 +81,7 @@ class ViolationList extends Component
         PpeViolation::query()->delete();
 
         $this->confirmingClearAll = false;
+        $this->lastViolationId = 0;
         $this->resetPage();
 
         session()->flash('message', 'All violation records and images have been successfully cleared.');

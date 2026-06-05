@@ -1,4 +1,33 @@
-<div>
+<div wire:poll.5s="checkForNewViolations"
+     x-data="{
+        playAlert() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const beep = (startTime) => {
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(800, startTime); 
+                    
+                    gainNode.gain.setValueAtTime(0.1, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.15);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    oscillator.start(startTime);
+                    oscillator.stop(startTime + 0.15);
+                };
+                
+                beep(audioCtx.currentTime);
+                beep(audioCtx.currentTime + 0.2);
+            } catch (e) {
+                console.warn('Audio playback failed:', e);
+            }
+        }
+     }"
+     @new-violation-alert.window="playAlert()">
     @section('title', 'Violations')
 
     {{-- Success Alert --}}
@@ -100,7 +129,26 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                     @forelse ($this->violations as $violation)
-                        <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                        <tr wire:key="row-{{ $violation->id }}"
+                            x-data="{ 
+                                id: {{ $violation->id }}, 
+                                isFlashing: false,
+                                triggerFlash() {
+                                    this.isFlashing = true;
+                                    let count = 0;
+                                    let interval = setInterval(() => {
+                                        count++;
+                                        this.isFlashing = (count % 2 === 0);
+                                        if(count >= 5) {
+                                            clearInterval(interval);
+                                            this.isFlashing = false;
+                                        }
+                                    }, 400);
+                                }
+                            }"
+                            @new-violation-alert.window="if ($event.detail.newIds?.includes(id)) triggerFlash()"
+                            :class="isFlashing ? 'bg-red-100 dark:bg-red-900/40 transition-colors duration-300' : 'transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50'"
+                        >
                             <td class="whitespace-nowrap px-5 py-3 text-slate-900 dark:text-slate-300">
                                 <span class="font-medium">{{ $violation->detected_at->format('d M Y') }}</span>
                                 <span class="block text-xs text-slate-500 dark:text-slate-400">{{ $violation->detected_at->format('H:i:s') }}</span>
