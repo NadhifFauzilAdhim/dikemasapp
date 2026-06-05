@@ -1,24 +1,10 @@
 <div wire:poll.10s>
-    {{-- Filters --}}
-    <div class="mb-6 flex flex-wrap items-center gap-3">
-        <select wire:model.live="cameraFilter" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-            <option value="">All Cameras</option>
-            @foreach ($this->cameras as $camera)
-                <option value="{{ $camera }}">{{ $camera }}</option>
-            @endforeach
-        </select>
-
-        <select wire:model.live="typeFilter" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-            <option value="">All Types</option>
-            <option value="NO-Hardhat">NO-Hardhat</option>
-            <option value="NO-Mask">NO-Mask</option>
-            <option value="NO-Safety Vest">NO-Safety Vest</option>
-        </select>
-
-        <div class="ml-auto flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-            <span class="relative flex h-2 w-2">
+    {{-- Auto-refresh Indicator --}}
+    <div class="mb-6 flex justify-end">
+        <div class="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/60 px-3 py-1.5 text-xs font-medium text-slate-500 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400">
+            <span class="relative flex h-1.5 w-1.5">
                 <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+                <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
             </span>
             Auto-refresh: 10s
         </div>
@@ -27,17 +13,17 @@
     {{-- Summary Cards --}}
     <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {{-- Today --}}
-        <div class="relative overflow-hidden rounded-xl border border-amber-200 bg-gradient-to-br from-amber-400 to-amber-500 p-5 shadow-lg shadow-amber-500/20 dark:border-amber-500/20 dark:from-amber-500/20 dark:to-amber-600/20 dark:shadow-none">
+        <div class="relative overflow-hidden rounded-xl border border-amber-200 bg-amber-50/60 p-5 shadow-sm transition-shadow hover:shadow-md dark:border-amber-500/20 dark:from-amber-500/20 dark:to-amber-600/20 dark:bg-none">
             <div class="relative z-10 flex items-center justify-between">
-                <p class="text-xs font-bold uppercase tracking-wider text-amber-50 dark:text-amber-400">Today</p>
-                <span class="rounded-lg bg-white/20 p-2 text-white dark:bg-amber-500/10 dark:text-amber-400 backdrop-blur-sm">
-                    <svg class="h-4 w-4 text-white dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Today</p>
+                <span class="rounded-lg bg-amber-100 p-2 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400">
+                    <svg class="h-4 w-4 text-amber-600 dark:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </span>
             </div>
-            <p class="relative z-10 mt-3 text-4xl font-black text-white dark:text-amber-400">{{ number_format($this->todayCount) }}</p>
-            <p class="relative z-10 mt-1 text-xs font-medium text-amber-100 dark:text-amber-500/70">violations detected</p>
+            <p class="relative z-10 mt-3 text-4xl font-black text-amber-900 dark:text-amber-400">{{ number_format($this->todayCount) }}</p>
+            <p class="relative z-10 mt-1 text-xs font-medium text-amber-700/80 dark:text-amber-500/70">violations detected</p>
             
-            <svg class="absolute -bottom-4 -right-4 h-32 w-32 text-white opacity-10 dark:text-amber-500 dark:opacity-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <svg class="absolute -bottom-4 -right-4 h-32 w-32 text-amber-600 opacity-5 dark:text-amber-500 dark:opacity-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
 
         {{-- This Week --}}
@@ -169,7 +155,7 @@
 
         const initChart = () => {
             const chartData = $wire.chartData;
-            const isDark = true; // Forced Dark Mode
+            const isDark = false; // Forced Light Mode
             
             const options = {
                 series: [{
@@ -205,7 +191,7 @@
                     axisTicks: { show: false },
                     labels: {
                         style: {
-                            colors: '#94a3b8',
+                            colors: '#64748b',
                             fontSize: '12px'
                         }
                     }
@@ -213,22 +199,22 @@
                 yaxis: {
                     labels: {
                         style: {
-                            colors: '#94a3b8',
+                            colors: '#64748b',
                         },
                         formatter: (val) => { return Math.round(val) }
                     }
                 },
                 grid: {
-                    borderColor: '#334155',
+                    borderColor: '#e2e8f0',
                     strokeDashArray: 4,
                     yaxis: { lines: { show: true } },
                     padding: { top: 0, right: 0, bottom: 0, left: 10 }
                 },
                 theme: {
-                    mode: 'dark'
+                    mode: 'light'
                 },
                 tooltip: {
-                    theme: 'dark',
+                    theme: 'light',
                     y: {
                         formatter: function (val) {
                             return val + " violations"

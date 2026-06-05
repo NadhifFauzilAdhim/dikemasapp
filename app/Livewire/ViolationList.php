@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\PpeViolation;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -35,6 +36,37 @@ class ViolationList extends Component
     public string $sortField = 'detected_at';
 
     public string $sortDirection = 'desc';
+
+    public bool $confirmingClearAll = false;
+
+    public function confirmClearAll(): void
+    {
+        $this->confirmingClearAll = true;
+    }
+
+    public function cancelClearAll(): void
+    {
+        $this->confirmingClearAll = false;
+    }
+
+    public function clearAll(): void
+    {
+        $imagePaths = PpeViolation::whereNotNull('image_path')
+            ->pluck('image_path')
+            ->filter();
+
+        $disk = config('ppe.storage_disk', 'public');
+        foreach ($imagePaths as $path) {
+            Storage::disk($disk)->delete($path);
+        }
+
+        PpeViolation::query()->delete();
+
+        $this->confirmingClearAll = false;
+        $this->resetPage();
+
+        session()->flash('message', 'All violation records and images have been successfully cleared.');
+    }
 
     public function sortBy(string $field): void
     {
@@ -96,7 +128,7 @@ class ViolationList extends Component
             ->when($this->dateTo, fn ($q) => $q->where('detected_at', '<=', $this->dateTo.' 23:59:59'))
             ->when($this->minConfidence > 0, fn ($q) => $q->minConfidence($this->minConfidence))
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(15);
+            ->paginate(10);
     }
 
     public function render(): View

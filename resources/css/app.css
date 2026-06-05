@@ -10,8 +10,14 @@
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 }
 
+@media (min-width: 1024px) {
+    html {
+        font-size: 20px; /* 125% of standard 16px */
+    }
+}
+
 /* Pagination styling for dark theme */
-nav[role="navigation"] {
+.dark nav[role="navigation"] {
     span, a {
         @apply text-slate-400 border-slate-700 bg-slate-800;
     }

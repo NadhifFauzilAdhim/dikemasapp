@@ -1,6 +1,16 @@
 <div>
     @section('title', 'Violations')
 
+    {{-- Success Alert --}}
+    @if (session()->has('message'))
+        <div class="mb-4 flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-800/30 dark:bg-emerald-950/20 dark:text-emerald-400">
+            <div class="flex items-center gap-2">
+                <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="text-sm font-medium">{{ session('message') }}</span>
+            </div>
+        </div>
+    @endif
+
     {{-- Filters --}}
     <div class="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
         <div class="flex flex-wrap items-end gap-3">
@@ -39,9 +49,14 @@
                 <input type="number" wire:model.live.debounce.500ms="minConfidence" min="0" max="1" step="0.1" placeholder="0.0" class="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
             </div>
 
-            <button wire:click="resetFilters" class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-transparent dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white">
-                Reset
-            </button>
+            <div class="flex items-center gap-2">
+                <button wire:click="resetFilters" class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-transparent dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white">
+                    Reset
+                </button>
+                <button wire:click="confirmClearAll" class="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 shadow-sm transition-colors hover:bg-red-100 hover:text-red-700 dark:border-red-800/40 dark:bg-red-950/20 dark:text-red-400 dark:hover:bg-red-950/40">
+                    Clear All
+                </button>
+            </div>
         </div>
     </div>
 
@@ -147,4 +162,39 @@
             </div>
         @endif
     </div>
+
+    {{-- Confirmation Modal --}}
+    @if ($confirmingClearAll)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {{-- Backdrop --}}
+            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" wire:click="cancelClearAll"></div>
+
+            {{-- Modal Box --}}
+            <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                <div class="flex items-start gap-4">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/10">
+                        <svg class="h-6 w-6 text-red-600 dark:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Clear All Detections?</h3>
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Are you sure you want to delete all violation detections? This action is permanent and will delete all stored violation data and their corresponding capture images.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button wire:click="cancelClearAll" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+                        Cancel
+                    </button>
+                    <button wire:click="clearAll" wire:loading.attr="disabled" class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-red-600 px-4 py-2 text-xs font-semibold text-white shadow-md shadow-red-500/10 transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:hover:bg-red-500 dark:focus:ring-offset-slate-900">
+                        <span wire:loading wire:target="clearAll" class="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                        Delete All
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
