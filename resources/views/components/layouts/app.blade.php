@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="PPE Violation Monitoring Dashboard - Real-time safety monitoring">
 
-    <title>{{ $title ?? 'PPE Monitoring' }} — DikemasApp</title>
+    <title>{{ $title ?? 'Dikemas Ops' }} — Industrial Monitoring</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -18,16 +18,12 @@
         <aside id="sidebar"
             class="fixed inset-y-0 left-0 z-30 w-64 transform border-r border-slate-200 bg-slate-50 transition-transform duration-200 ease-in-out dark:border-slate-800 dark:bg-slate-900 lg:relative lg:translate-x-0 -translate-x-full">
             <div class="flex h-16 items-center gap-3 border-b border-slate-200 px-6 dark:border-slate-800">
-                <div
-                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-red-600 shadow-sm shadow-amber-500/20">
-                    <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
+                <div class="flex items-center justify-center">
+                    <img src="{{ asset('image/logo-header.png') }}" alt="Logo" class="h-8 w-auto object-contain">
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold text-slate-900 dark:text-white">PPE Monitor</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">DikemasApp</p>
+                    <h1 class="text-sm font-bold text-slate-900 dark:text-white">Dikemas Ops</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Monitoring System</p>
                 </div>
             </div>
 

@@ -3,11 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Login' }} — DikemasApp</title>
+    <title>{{ $title ?? 'Login' }} — Dikemas Ops</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 to-slate-100 px-4 text-slate-800 antialiased border-t-4 border-amber-500 transition-colors duration-300 dark:from-slate-950 dark:to-slate-900 dark:text-slate-200 sm:px-6 lg:px-8">
-    {{ $slot }}
+<body class="relative flex min-h-screen items-center justify-center bg-slate-50 px-4 text-slate-800 antialiased border-t-4 border-amber-500 dark:bg-slate-950 dark:text-slate-200 sm:px-6 lg:px-8">
+    <div class="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-30 dark:opacity-20 mix-blend-multiply dark:mix-blend-screen" style="background-image: url('{{ asset('image/dikemasloginbackground.jpg') }}'); filter: blur(2px);"></div>
+    <div class="relative z-10 w-full flex justify-center">
+        {{ $slot }}
+    </div>
 </body>
 </html>
