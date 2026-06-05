@@ -138,108 +138,116 @@
     </div>
 
     {{-- Trend Chart --}}
-    <div class="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900" wire:ignore>
+    <div class="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+         x-data="dashboardChartComponent(@js($this->chartData))"
+         x-effect="updateChart(@js($this->chartData))">
         <div class="mb-4 flex items-center justify-between">
             <div>
                 <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Violation Trends</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400">Last 7 days</p>
             </div>
         </div>
-        <div id="violation-chart" class="-ml-2"></div>
+        <div id="violation-chart" class="-ml-2" wire:ignore></div>
     </div>
 
     {{-- Chart Initialization Script --}}
-    @script
     <script>
-        let chart = null;
-
-        const initChart = () => {
-            const chartData = $wire.chartData;
-            const isDark = false; // Forced Light Mode
-            
-            const options = {
-                series: [{
-                    name: 'Violations',
-                    data: chartData.data
-                }],
-                chart: {
-                    type: 'area',
-                    height: 300,
-                    fontFamily: 'inherit',
-                    toolbar: { show: false },
-                    animations: { enabled: true },
-                    background: 'transparent'
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dashboardChartComponent', (initialData) => ({
+                chart: null,
+                init() {
+                    this.renderChart(initialData);
                 },
-                colors: ['#f59e0b'], // Amber 500
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.4,
-                        opacityTo: 0.05,
-                        stops: [0, 100]
+                updateChart(newData) {
+                    if (this.chart) {
+                        this.chart.updateSeries([{
+                            name: 'Violations',
+                            data: newData.data
+                        }]);
+                        this.chart.updateOptions({
+                            xaxis: { categories: newData.categories }
+                        });
+                    } else {
+                        this.renderChart(newData);
                     }
                 },
-                dataLabels: { enabled: false },
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                xaxis: {
-                    categories: chartData.categories,
-                    axisBorder: { show: false },
-                    axisTicks: { show: false },
-                    labels: {
-                        style: {
-                            colors: '#64748b',
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        style: {
-                            colors: '#64748b',
+                renderChart(chartData) {
+                    const options = {
+                        series: [{
+                            name: 'Violations',
+                            data: chartData.data
+                        }],
+                        chart: {
+                            type: 'area',
+                            height: 300,
+                            fontFamily: 'inherit',
+                            toolbar: { show: false },
+                            animations: { enabled: true },
+                            background: 'transparent'
                         },
-                        formatter: (val) => { return Math.round(val) }
-                    }
-                },
-                grid: {
-                    borderColor: '#e2e8f0',
-                    strokeDashArray: 4,
-                    yaxis: { lines: { show: true } },
-                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
-                },
-                theme: {
-                    mode: 'light'
-                },
-                tooltip: {
-                    theme: 'light',
-                    y: {
-                        formatter: function (val) {
-                            return val + " violations"
+                        colors: ['#f59e0b'], // Amber 500
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.4,
+                                opacityTo: 0.05,
+                                stops: [0, 100]
+                            }
+                        },
+                        dataLabels: { enabled: false },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 3
+                        },
+                        xaxis: {
+                            categories: chartData.categories,
+                            axisBorder: { show: false },
+                            axisTicks: { show: false },
+                            labels: {
+                                style: {
+                                    colors: '#64748b',
+                                    fontSize: '12px'
+                                }
+                            }
+                        },
+                        yaxis: {
+                            labels: {
+                                style: {
+                                    colors: '#64748b',
+                                },
+                                formatter: (val) => { return Math.round(val) }
+                            }
+                        },
+                        grid: {
+                            borderColor: '#e2e8f0',
+                            strokeDashArray: 4,
+                            yaxis: { lines: { show: true } },
+                            padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                        },
+                        theme: {
+                            mode: 'light'
+                        },
+                        tooltip: {
+                            theme: 'light',
+                            y: {
+                                formatter: function (val) {
+                                    return val + " violations"
+                                }
+                            }
                         }
+                    };
+
+                    if (this.chart) {
+                        this.chart.destroy();
                     }
+
+                    this.chart = new ApexCharts(document.querySelector("#violation-chart"), options);
+                    this.chart.render();
                 }
-            };
-
-            if (chart) {
-                chart.destroy();
-            }
-
-            chart = new ApexCharts(document.querySelector("#violation-chart"), options);
-            chart.render();
-        };
-
-        // Initialize when component loads
-        initChart();
-
-        // Listen for data updates
-        $wire.on('chart-updated', () => {
-            initChart();
+            }));
         });
     </script>
-    @endscript
 
     {{-- Recent Violations Feed --}}
     <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">

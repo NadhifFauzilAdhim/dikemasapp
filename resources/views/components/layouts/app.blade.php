@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="PPE Violation Monitoring Dashboard - Real-time safety monitoring">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" href="{{ asset('image/logo-header.png') }}?v=2">
 
     <!-- PWA Setup -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
@@ -16,6 +16,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body
