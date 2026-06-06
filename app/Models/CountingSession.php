@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -92,7 +93,7 @@ class CountingSession extends Model
         return $this->session_started_at->diffForHumans(now(), [
             'parts' => 2,
             'short' => true,
-            'syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE,
+            'syntax' => CarbonInterface::DIFF_ABSOLUTE,
         ]);
     }
 }

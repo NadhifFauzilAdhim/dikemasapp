@@ -2,15 +2,15 @@
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Livewire\ApiKeys;
+use App\Livewire\Attendance\EmployeeList;
+use App\Livewire\Attendance\Enrollment;
+use App\Livewire\Attendance\Kiosk;
 use App\Livewire\Auth\Login;
 use App\Livewire\CountingMonitor;
 use App\Livewire\Dashboard;
 use App\Livewire\ViolationDetail;
 use App\Livewire\ViolationHeatmap;
 use App\Livewire\ViolationList;
-use App\Livewire\Attendance\EmployeeList;
-use App\Livewire\Attendance\Enrollment;
-use App\Livewire\Attendance\Kiosk;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', Login::class)->name('login')->middleware('guest');
@@ -22,10 +22,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/violations/{violation}', ViolationDetail::class)->name('violations.show');
     Route::get('/counting', CountingMonitor::class)->name('counting.index');
     Route::get('/api-keys', ApiKeys::class)->name('api-keys.index');
-    
+
     Route::get('/attendance', EmployeeList::class)->name('attendance.index');
     Route::get('/attendance/enroll', Enrollment::class)->name('attendance.enroll');
-    
+
     Route::post('/logout', LogoutController::class)->name('logout');
 });
 

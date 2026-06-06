@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PpeViolation;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -9,8 +10,8 @@ $testBearerToken = null;
 
 beforeEach(function () use (&$testUser, &$testBearerToken): void {
     Storage::fake('public');
-    
-    $testUser = \App\Models\User::factory()->create();
+
+    $testUser = User::factory()->create();
     $token = $testUser->createToken('test-token');
     $testBearerToken = $token->plainTextToken;
 });
@@ -44,7 +45,7 @@ it('successfully creates a violation with valid data', function () use (&$testBe
     $response = $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg', 640, 480),
         'payload' => makeValidPayload(),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(201)
         ->assertJson([
@@ -60,7 +61,7 @@ it('persists the violation to the database', function () use (&$testBearerToken)
     $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg', 640, 480),
         'payload' => makeValidPayload(),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $this->assertDatabaseCount('ppe_violations', 1);
     $this->assertDatabaseHas('ppe_violations', [
@@ -75,7 +76,7 @@ it('stores the image to the public disk', function () use (&$testBearerToken): v
     $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg', 640, 480),
         'payload' => makeValidPayload(),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $violation = PpeViolation::first();
 
@@ -85,7 +86,7 @@ it('stores the image to the public disk', function () use (&$testBearerToken): v
 it('fails without an image', function () use (&$testBearerToken): void {
     $response = $this->postJson('/api/v1/violations', [
         'payload' => makeValidPayload(),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(422)
         ->assertJson(['status' => 'error'])
@@ -96,7 +97,7 @@ it('fails with invalid JSON payload', function () use (&$testBearerToken): void 
     $response = $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg'),
         'payload' => 'not-valid-json{{{',
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(400)
         ->assertJson([
@@ -109,7 +110,7 @@ it('fails with invalid violation type', function () use (&$testBearerToken): voi
     $response = $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg'),
         'payload' => makeValidPayload(['violation_type' => 'INVALID-TYPE']),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['violation_type']);
@@ -119,7 +120,7 @@ it('fails with invalid violation class id', function () use (&$testBearerToken):
     $response = $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg'),
         'payload' => makeValidPayload(['violation_class_id' => 99]),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['violation_class_id']);
@@ -129,7 +130,7 @@ it('fails with confidence out of range', function () use (&$testBearerToken): vo
     $response = $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg'),
         'payload' => makeValidPayload(['confidence' => 1.5]),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['confidence']);
@@ -162,7 +163,7 @@ it('fails with wrong API key', function (): void {
 });
 
 it('allows requests with correct API key and updates last_used_at', function (): void {
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
     $token = $user->createToken('Test Camera');
     $plainTextToken = $token->plainTextToken;
 
@@ -172,11 +173,11 @@ it('allows requests with correct API key and updates last_used_at', function ():
         'image' => UploadedFile::fake()->image('capture.jpg'),
         'payload' => makeValidPayload(),
     ], [
-        'Authorization' => 'Bearer ' . $plainTextToken,
+        'Authorization' => 'Bearer '.$plainTextToken,
     ]);
 
     $response->assertStatus(201);
-    
+
     $token->accessToken->refresh();
     $this->assertNotNull($token->accessToken->last_used_at);
 });
@@ -185,7 +186,7 @@ it('fails without missing required payload fields', function () use (&$testBeare
     $response = $this->postJson('/api/v1/violations', [
         'image' => UploadedFile::fake()->image('capture.jpg'),
         'payload' => json_encode(['camera_id' => 'CAM-001']),
-    ], ['Authorization' => 'Bearer ' . $testBearerToken]);
+    ], ['Authorization' => 'Bearer '.$testBearerToken]);
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['timestamp', 'violation_type', 'confidence', 'bbox', 'person_count']);

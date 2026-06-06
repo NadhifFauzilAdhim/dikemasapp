@@ -34,7 +34,7 @@
         <main class="flex-1 overflow-y-auto overflow-x-hidden">
             {{-- Top Bar --}}
             <x-layouts.topbar :title="$title ?? 'Dashboard'" />
-            <div class="p-6">
+            <div class="p-4 md:p-6">
                 {{ $slot }}
             </div>
         </main>

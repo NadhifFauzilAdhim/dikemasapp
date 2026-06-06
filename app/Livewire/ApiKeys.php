@@ -13,6 +13,7 @@ use Livewire\Component;
 class ApiKeys extends Component
 {
     public string $name = '';
+
     public ?string $newKey = null;
 
     public function generate(): void

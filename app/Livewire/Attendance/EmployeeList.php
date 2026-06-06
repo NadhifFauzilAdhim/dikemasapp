@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Attendance;
 
-use Livewire\Component;
 use App\Models\Employee;
-use Livewire\WithPagination;
+use App\Services\FaceRecognitionService;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app')]
 class EmployeeList extends Component
@@ -17,11 +19,11 @@ class EmployeeList extends Component
     public function removeEnrollment($employeeId)
     {
         $employee = Employee::findOrFail($employeeId);
-        
+
         if ($employee->is_enrolled) {
-            $service = new \App\Services\FaceRecognitionService();
+            $service = new FaceRecognitionService;
             $service->delete($employee->employee_id);
-            
+
             $employee->update(['is_enrolled' => false, 'photo_path' => null]);
         }
     }
@@ -29,24 +31,24 @@ class EmployeeList extends Component
     public function deleteEmployee($employeeId)
     {
         $employee = Employee::findOrFail($employeeId);
-        
+
         if ($employee->is_enrolled) {
-            $service = new \App\Services\FaceRecognitionService();
+            $service = new FaceRecognitionService;
             $service->delete($employee->employee_id);
-            
+
             if ($employee->photo_path) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($employee->photo_path);
+                Storage::disk('public')->delete($employee->photo_path);
             }
         }
-        
+
         $employee->delete();
     }
 
     public function render()
     {
         $employees = Employee::withCount('attendances')
-            ->where('name', 'like', '%' . $this->search . '%')
-            ->orWhere('employee_id', 'like', '%' . $this->search . '%')
+            ->where('name', 'like', '%'.$this->search.'%')
+            ->orWhere('employee_id', 'like', '%'.$this->search.'%')
             ->latest()
             ->paginate(10);
 

@@ -1,18 +1,18 @@
 @props(['title' => 'Dashboard'])
 
 <header
-    class="sticky top-0 z-10 flex h-16 items-center gap-6 border-b border-slate-200 bg-slate-50/85 px-6 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80 shadow-sm shadow-slate-100/50">
+    class="sticky top-0 z-10 flex h-16 items-center gap-3 md:gap-6 border-b border-slate-200 bg-slate-50/85 px-4 md:px-6 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80 shadow-sm shadow-slate-100/50">
     <button onclick="toggleSidebar()"
-        class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white lg:hidden">
+        class="rounded-lg p-1.5 md:p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white lg:hidden">
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
     </button>
 
-    <div class="flex flex-col">
-        <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">System
+    <div class="flex flex-col truncate">
+        <span class="text-[9px] md:text-[10px] font-semibold uppercase tracking-wider text-slate-400">System
             Overview</span>
-        <h2 class="text-base font-bold text-slate-800 dark:text-white">{{ $title }}</h2>
+        <h2 class="text-sm md:text-base font-bold text-slate-800 dark:text-white truncate">{{ $title }}</h2>
     </div>
 
     {{-- Search Bar --}}
@@ -31,11 +31,11 @@
         </div>
     </div>
 
-    <div class="ml-auto flex items-center gap-4">
+    <div class="ml-auto flex items-center gap-2 md:gap-4 shrink-0">
 
         {{-- Notifications --}}
         <button
-            class="relative rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors">
+            class="relative rounded-lg p-1.5 md:p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors">
             <span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-amber-500 ring-2 ring-slate-50"></span>
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -44,16 +44,16 @@
         </button>
 
         {{-- Current Time --}}
-        <span class="text-xs font-medium text-slate-500 dark:text-slate-400" id="current-time"></span>
+        <span class="hidden md:block text-xs font-medium text-slate-500 dark:text-slate-400" id="current-time"></span>
 
         {{-- User Profile --}}
-        <div class="flex items-center gap-3 pl-2 border-l border-slate-200">
-            <div class="flex flex-col text-right">
+        <div class="flex items-center gap-2 md:gap-3 pl-2 border-l border-slate-200">
+            <div class="hidden sm:flex flex-col text-right">
                 <span class="text-xs font-semibold text-slate-700">{{ auth()->user()->name ?? 'Admin' }}</span>
                 <span class="text-[9px] text-slate-400">{{ auth()->user()->email ?? 'admin@dikemas.com' }}</span>
             </div>
             <div
-                class="h-8 w-8 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-xs font-bold text-white shadow-sm ring-2 ring-amber-500/20">
+                class="h-7 w-7 md:h-8 md:w-8 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-xs font-bold text-white shadow-sm ring-2 ring-amber-500/20 shrink-0">
                 {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
             </div>
         </div>

@@ -101,15 +101,15 @@ class ViolationHeatmap extends Component
 
         $types = $violations->groupBy('violation_type')->map->count()->sortDesc();
         $cameras = $violations->groupBy('camera_id')->map->count()->sortDesc();
-        
-        $hours = $violations->groupBy(function($val) {
+
+        $hours = $violations->groupBy(function ($val) {
             return $val->detected_at->format('H');
         })->map->count()->sortDesc();
 
         $peakHourStr = '—';
         if ($hours->isNotEmpty()) {
             $peakH = $hours->keys()->first();
-            $peakHourStr = $peakH . ':00 - ' . str_pad($peakH + 1, 2, '0', STR_PAD_LEFT) . ':00';
+            $peakHourStr = $peakH.':00 - '.str_pad($peakH + 1, 2, '0', STR_PAD_LEFT).':00';
         }
 
         return [
