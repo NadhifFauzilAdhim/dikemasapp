@@ -5,15 +5,23 @@
     messageType: '',
 
     initCamera() {
+        if (this.stream) return;
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(s => {
                 this.stream = s;
-                this.$refs.video.srcObject = s;
-                this.$refs.video.play();
+                this.attachCamera();
             })
             .catch(err => {
                 this.showMessage('Kamera tidak ditemukan!', 'error');
             });
+    },
+    attachCamera() {
+        if (this.stream && this.$refs.video) {
+            this.$refs.video.srcObject = this.stream;
+            this.$refs.video.play();
+        } else if (!this.stream) {
+            this.initCamera();
+        }
     },
     scan() {
         if (this.isProcessing) return;
@@ -35,9 +43,24 @@
     }
 }"
     x-init="initCamera()"
-    @attendance-success.window="isProcessing = false; showMessage(`Berhasil ${$event.detail.type === 'check-in' ? 'Masuk' : 'Keluar'}: ` + $event.detail.name, 'success')"
-    @attendance-failed.window="isProcessing = false; showMessage($event.detail.message ? $event.detail.message : 'Wajah tidak dikenali atau belum terdaftar!', 'error')">
-    <!-- Left Section: Scanner -->
+    @attendance-success.window="
+        isProcessing = false; 
+        showMessage(`Berhasil ${($event.detail[0] || $event.detail)?.type === 'check-in' ? 'Masuk' : 'Keluar'}: ${($event.detail[0] || $event.detail)?.name || ''}`, 'success');
+        setTimeout(() => attachCamera(), 100);
+    "
+    @restart-camera.window="
+        isProcessing = false;
+        setTimeout(() => attachCamera(), 100);
+    "
+    @attendance-failed.window="
+        isProcessing = false; 
+        showMessage(($event.detail[0] || $event.detail)?.message || 'Wajah tidak dikenali atau belum terdaftar!', 'error');
+        setTimeout(() => attachCamera(), 100);
+    "
+    @scan-completed.window="
+        isProcessing = false;
+    ">
+    <!-- Left Section: Scanner or Confirmation -->
     <div class="flex w-full flex-col items-center justify-center p-6 md:w-2/3 lg:w-3/4">
         <div class="mb-8 text-center">
             <img src="{{ asset('image/logo-header.png') }}" alt="Dikemas Ops Logo"
@@ -46,47 +69,109 @@
             <p class="mt-2 text-sm text-slate-500">Pindai wajah Anda untuk mencatat kehadiran hari ini</p>
         </div>
 
-        <div
-            class="relative mx-auto aspect-[4/3] w-full max-w-lg overflow-hidden rounded-3xl border-8 border-white bg-black shadow-2xl shadow-slate-200">
-            <video x-ref="video" class="h-full w-full object-cover transform scale-x-[-1]"></video>
+        @if ($pendingAttendance)
+            <!-- Confirmation UI -->
+            <div class="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl ring-1 ring-slate-200">
+                <div class="mb-6 flex items-center gap-4 border-b border-slate-100 pb-6">
+                    <div
+                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-blue-100 text-2xl font-bold text-blue-600">
+                        {{ strtoupper(substr($pendingAttendance['name'], 0, 1)) }}
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Verifikasi Identitas</h2>
+                        <p class="text-slate-500">Mohon periksa kembali data Anda</p>
+                    </div>
+                </div>
 
-            <div x-show="isProcessing"
-                class="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-sm">
-                <div class="h-16 w-16 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
+                <table class="mb-8 w-full text-left text-sm text-slate-600">
+                    <tbody>
+                        <tr class="border-b border-slate-50">
+                            <th class="w-1/3 py-4 font-semibold text-slate-400">Nama Lengkap</th>
+                            <td class="py-4 text-lg font-bold text-slate-800">{{ $pendingAttendance['name'] }}</td>
+                        </tr>
+                        <tr class="border-b border-slate-50">
+                            <th class="py-4 font-semibold text-slate-400">ID Karyawan</th>
+                            <td class="py-4 font-medium text-slate-800">{{ $pendingAttendance['employee_id'] }}</td>
+                        </tr>
+                        <tr>
+                            <th class="py-4 font-semibold text-slate-400">Status Absen</th>
+                            <td class="py-4">
+                                <span
+                                    class="inline-flex rounded-md px-3 py-1.5 text-sm font-bold {{ $pendingAttendance['type'] === 'check-in' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
+                                    {{ $pendingAttendance['type'] === 'check-in' ? 'MASUK' : 'KELUAR' }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="flex w-full gap-4">
+                    <button wire:click="cancelAttendance" wire:loading.attr="disabled"
+                        class="flex-1 rounded-xl bg-slate-100 py-4 font-bold text-slate-600 transition hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 disabled:opacity-50">
+                        Bukan Saya
+                    </button>
+                    <button wire:click="confirmAttendance" wire:loading.attr="disabled"
+                        class="flex-1 rounded-xl bg-blue-600 py-4 font-bold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 disabled:opacity-50">
+                        <span wire:loading.remove wire:target="confirmAttendance">Ya, Lanjut Absen</span>
+                        <span wire:loading wire:target="confirmAttendance">Menyimpan...</span>
+                    </button>
+                </div>
+            </div>
+        @else
+            <!-- Scanner Video -->
+            <div
+                class="relative mx-auto aspect-[4/3] w-full max-w-lg overflow-hidden rounded-3xl border-8 border-white bg-black shadow-2xl shadow-slate-200">
+                <video x-ref="video" class="h-full w-full object-cover transform scale-x-[-1]"></video>
+
+                <div x-show="isProcessing"
+                    class="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-sm">
+                    <div class="h-16 w-16 animate-spin rounded-full border-4 border-amber-500 border-t-transparent">
+                    </div>
+                </div>
+
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="h-64 w-64 rounded-3xl border-2 border-dashed border-white/70 shadow-sm"></div>
+                </div>
             </div>
 
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div class="h-64 w-64 rounded-3xl border-2 border-dashed border-white/70 shadow-sm"></div>
+            <div class="mt-8">
+                <button @click="scan()" :disabled="isProcessing"
+                    class="rounded-full bg-blue-600 px-14 py-4 text-2xl font-black tracking-widest text-white shadow-xl shadow-blue-600/30 transition-all hover:-translate-y-1 hover:bg-blue-700 active:translate-y-0 disabled:opacity-50 focus:outline-none focus:ring-4 focus:ring-blue-500">
+                    TAP TO SCAN
+                </button>
             </div>
-        </div>
-
-        <div class="mt-8">
-            <button @click="scan()" :disabled="isProcessing"
-                class="rounded-full bg-blue-600 px-14 py-4 text-2xl font-black tracking-widest text-white shadow-xl shadow-blue-600/30 transition-all hover:-translate-y-1 hover:bg-blue-700 active:translate-y-0 disabled:opacity-50 focus:outline-none focus:ring-4 focus:ring-blue-500">
-                TAP TO SCAN
-            </button>
-        </div>
+        @endif
     </div>
 
     <!-- Popup Notification Modal -->
-    <div x-show="message" x-transition.opacity.duration.300ms 
-        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" style="display: none;">
+    <div x-show="message" x-transition.opacity.duration.300ms
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
+        style="display: none;">
         <div x-show="message" x-transition.scale.90.duration.300ms @click.outside="message = ''"
             class="mx-4 flex w-full max-w-sm flex-col items-center justify-center rounded-3xl bg-white p-10 text-center shadow-2xl">
-            
-            <div x-show="messageType === 'success'" class="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100 text-emerald-500 shadow-inner">
-                <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-            </div>
-            
-            <div x-show="messageType === 'error'" class="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-red-100 text-red-500 shadow-inner">
-                <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+
+            <div x-show="messageType === 'success'"
+                class="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100 text-emerald-500 shadow-inner">
+                <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
             </div>
 
-            <h3 class="mb-3 text-3xl font-extrabold text-slate-800" 
+            <div x-show="messageType === 'error'"
+                class="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-red-100 text-red-500 shadow-inner">
+                <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </div>
+
+            <h3 class="mb-3 text-3xl font-extrabold text-slate-800"
                 x-text="messageType === 'success' ? 'Berhasil!' : 'Gagal!'"></h3>
             <p class="text-lg font-medium text-slate-600" x-text="message"></p>
         </div>
     </div>
+
+
 
     <!-- Right Section: Today's Attendees -->
     <div class="w-full border-l border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/50 md:w-1/3 lg:w-1/4">

@@ -12,6 +12,8 @@ use Livewire\Attributes\Layout;
 #[Layout('components.layouts.blank')]
 class Kiosk extends Component
 {
+    public $pendingAttendance = null;
+
     #[\Livewire\Attributes\Computed]
     public function todaysAttendances()
     {
@@ -54,26 +56,55 @@ class Kiosk extends Component
 
                 $determinedType = ($todayCount === 0) ? 'check-in' : 'check-out';
 
-                $newFileName = 'attendances/' . $employee->employee_id . '-' . time() . '.' . $imageType;
-                Storage::disk('public')->move($fileName, $newFileName);
-                
-                Attendance::create([
-                    'employee_id' => $employee->id,
+                $this->pendingAttendance = [
+                    'employee_id_db' => $employee->id,
+                    'employee_id' => $employee->employee_id,
+                    'name' => $employee->name,
                     'type' => $determinedType,
                     'confidence' => $res['data']['confidence'],
-                    'photo_path' => $newFileName,
-                    'recorded_at' => now(),
-                ]);
+                    'temp_file' => $fileName,
+                    'image_type' => $imageType
+                ];
                 
-                unset($this->todaysAttendances);
-                
-                $this->dispatch('attendance-success', name: $employee->name, type: $determinedType);
+                $this->dispatch('scan-completed');
                 return;
             }
         }
         
         Storage::disk('public')->delete($fileName);
         $this->dispatch('attendance-failed');
+    }
+
+    public function confirmAttendance()
+    {
+        if (!$this->pendingAttendance) return;
+        
+        $p = $this->pendingAttendance;
+        
+        $newFileName = 'attendances/' . $p['employee_id'] . '-' . time() . '.' . $p['image_type'];
+        Storage::disk('public')->move($p['temp_file'], $newFileName);
+        
+        Attendance::create([
+            'employee_id' => $p['employee_id_db'],
+            'type' => $p['type'],
+            'confidence' => $p['confidence'],
+            'photo_path' => $newFileName,
+            'recorded_at' => now(),
+        ]);
+        
+        unset($this->todaysAttendances);
+        
+        $this->dispatch('attendance-success', name: $p['name'], type: $p['type']);
+        $this->pendingAttendance = null;
+    }
+    
+    public function cancelAttendance()
+    {
+        if ($this->pendingAttendance) {
+            Storage::disk('public')->delete($this->pendingAttendance['temp_file']);
+            $this->pendingAttendance = null;
+        }
+        $this->dispatch('restart-camera');
     }
 
     public function render()

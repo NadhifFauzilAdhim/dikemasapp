@@ -16,14 +16,21 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+    // Hanya tangkap request HTTP/HTTPS
+    if (!event.request.url.startsWith('http')) return;
+
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                // Cache hit - return response
+                // Cache hit - kembalikan dari cache
                 if (response) {
                     return response;
                 }
-                return fetch(event.request);
+                // Fetch dari network, tangkap error jika gagal (offline/server down)
+                return fetch(event.request).catch(error => {
+                    console.warn('PWA Fetch failed:', event.request.url, error);
+                    // TODO: Return offline fallback page di masa depan jika diperlukan
+                });
             })
     );
 });
