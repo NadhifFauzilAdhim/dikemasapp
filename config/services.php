@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'face_recognition' => [
+        'base_url' => env('FACE_RECOGNITION_API_URL', 'http://localhost:8001'),
+        'api_key' => env('FACE_RECOGNITION_API_KEY'),
+    ],
 ];
