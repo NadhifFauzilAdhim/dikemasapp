@@ -49,7 +49,8 @@ class ViolationList extends Component
     #[Url]
     public string $dateTo = '';
 
-    public float $minConfidence = 0;
+    #[Url]
+    public string $minConfidence = '';
 
     public string $sortField = 'detected_at';
 
@@ -145,7 +146,19 @@ class ViolationList extends Component
             ->when($this->typeFilter, fn ($q) => $q->byType($this->typeFilter))
             ->when($this->dateFrom, fn ($q) => $q->where('detected_at', '>=', $this->dateFrom))
             ->when($this->dateTo, fn ($q) => $q->where('detected_at', '<=', $this->dateTo.' 23:59:59'))
-            ->when($this->minConfidence > 0, fn ($q) => $q->minConfidence($this->minConfidence))
+            ->when($this->minConfidence !== '', function ($q) {
+                $clean = str_replace(',', '.', $this->minConfidence);
+                if (is_numeric($clean)) {
+                    $val = (float) $clean;
+                    if ($val > 1) {
+                        $val = $val / 100;
+                    }
+
+                    return $q->minConfidence($val);
+                }
+
+                return $q;
+            })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(10);
     }

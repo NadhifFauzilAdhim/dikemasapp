@@ -67,7 +67,45 @@
                     <svg class="w-32 h-32 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 </div>
                 
-                <canvas x-ref="canvas" class="absolute inset-0 z-10 w-full h-full"></canvas>
+                <canvas x-ref="canvas" class="absolute inset-0 z-10 w-full h-full cursor-crosshair"></canvas>
+
+                <!-- Floating Tooltip Box -->
+                <div x-show="hoveredZone" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute pointer-events-none z-30 rounded-xl border border-slate-700/50 bg-slate-900/90 p-4 shadow-xl backdrop-blur-md text-slate-200 text-xs w-64"
+                     :style="`left: ${hoveredZone ? hoveredZone.screenX : 0}px; top: ${hoveredZone ? hoveredZone.screenY : 0}px;`"
+                     style="display: none;">
+                    <div class="flex items-center gap-1.5 font-bold text-amber-400 mb-2">
+                        <svg class="h-4 w-4 text-amber-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                        Analisis Zona Pelanggaran
+                    </div>
+                    <div class="space-y-1 text-[11px]">
+                        <div class="flex justify-between border-b border-slate-800 pb-1.5 mb-1.5">
+                            <span class="text-slate-400">Total Kejadian:</span>
+                            <span class="font-bold text-white"><span x-text="hoveredZone ? hoveredZone.count : 0"></span> Pelanggaran</span>
+                        </div>
+                        <div class="text-[10px] text-slate-500 font-semibold tracking-wider uppercase mb-1">Distribusi Tipe:</div>
+                        <div class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                            <template x-for="(count, type) in (hoveredZone ? hoveredZone.types : {})" :key="type">
+                                <div class="flex justify-between pl-1 font-mono">
+                                    <span class="text-slate-300" x-text="type"></span>
+                                    <span class="text-amber-500 font-bold" x-text="`${count}x`"></span>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="mt-2.5 flex flex-col pt-1.5 border-t border-slate-800">
+                            <span class="text-[9px] text-slate-500 uppercase tracking-wider">Terakhir Terdeteksi:</span>
+                            <span class="font-semibold text-slate-300 mt-0.5" x-text="hoveredZone ? hoveredZone.latestTime : ''"></span>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="absolute bottom-4 right-4 z-20 flex items-center gap-3 rounded-lg bg-slate-900/80 px-4 py-2 text-xs text-slate-300 backdrop-blur-md border border-slate-700">
                     <div class="flex items-center gap-1.5">
@@ -128,8 +166,91 @@
                 points: initialPoints,
                 dimensions: initialDimensions,
                 ctx: null,
+                hoveredZone: null,
+                hoverRadius: 55,
                 initCanvas() {
                     this.ctx = this.$refs.canvas.getContext('2d');
+                    this.drawHeatmap();
+
+                    this.$refs.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                    this.$refs.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+                },
+                handleMouseMove(e) {
+                    const canvas = this.$refs.canvas;
+                    const rect = canvas.getBoundingClientRect();
+                    
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+
+                    let maxX = this.dimensions ? this.dimensions.width : 1280; 
+                    let maxY = this.dimensions ? this.dimensions.height : 720;
+                    
+                    const actualMaxX = Math.max(...this.points.map(p => p.x), 1);
+                    const actualMaxY = Math.max(...this.points.map(p => p.y), 1);
+                    
+                    if (actualMaxX > maxX) maxX = actualMaxX * 1.05;
+                    if (actualMaxY > maxY) maxY = actualMaxY * 1.05;
+
+                    const nearbyPoints = this.points.filter(point => {
+                        const scaledX = (point.x / maxX) * canvas.width;
+                        const scaledY = (point.y / maxY) * canvas.height;
+                        const dist = Math.hypot(mouseX - scaledX, mouseY - scaledY);
+                        return dist <= this.hoverRadius;
+                    });
+
+                    if (nearbyPoints.length > 0) {
+                        const types = {};
+                        let latestTime = null;
+                        
+                        nearbyPoints.forEach(p => {
+                            types[p.violation_type] = (types[p.violation_type] || 0) + 1;
+                            if (!latestTime || p.detected_at > latestTime) {
+                                latestTime = p.detected_at;
+                            }
+                        });
+
+                        let formattedTime = '—';
+                        if (latestTime) {
+                            const date = new Date(latestTime);
+                            formattedTime = date.toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric'
+                            }) + ' ' + date.toLocaleTimeString('id-ID', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                        }
+
+                        let tooltipX = mouseX + 15;
+                        let tooltipY = mouseY + 15;
+
+                        // Boundary checks to prevent clipping
+                        if (tooltipX > rect.width - 270) {
+                            tooltipX = mouseX - 270;
+                        }
+                        if (tooltipY > rect.height - 185) {
+                            tooltipY = mouseY - 185;
+                        }
+
+                        this.hoveredZone = {
+                            x: mouseX,
+                            y: mouseY,
+                            count: nearbyPoints.length,
+                            types: types,
+                            latestTime: formattedTime,
+                            screenX: tooltipX,
+                            screenY: tooltipY
+                        };
+                    } else {
+                        this.hoveredZone = null;
+                    }
+
+                    this.drawHeatmap();
+                },
+                handleMouseLeave() {
+                    this.hoveredZone = null;
                     this.drawHeatmap();
                 },
                 drawHeatmap() {
@@ -174,6 +295,26 @@
                         this.ctx.fillStyle = gradient;
                         this.ctx.fill();
                     });
+
+                    // Draw target reticle if zone hovered
+                    if (this.hoveredZone) {
+                        this.ctx.globalCompositeOperation = 'source-over';
+                        
+                        // Outer dashed ring
+                        this.ctx.beginPath();
+                        this.ctx.arc(this.hoveredZone.x, this.hoveredZone.y, this.hoverRadius, 0, 2 * Math.PI);
+                        this.ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+                        this.ctx.lineWidth = 1.5;
+                        this.ctx.setLineDash([4, 4]);
+                        this.ctx.stroke();
+                        this.ctx.setLineDash([]); // reset
+
+                        // Inner solid dot
+                        this.ctx.beginPath();
+                        this.ctx.arc(this.hoveredZone.x, this.hoveredZone.y, 4, 0, 2 * Math.PI);
+                        this.ctx.fillStyle = '#f59e0b';
+                        this.ctx.fill();
+                    }
                 }
             }));
         });

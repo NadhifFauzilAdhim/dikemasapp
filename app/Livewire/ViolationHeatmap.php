@@ -23,7 +23,7 @@ class ViolationHeatmap extends Component
     public function getPointsProperty(): array
     {
         $query = PpeViolation::query()
-            ->select(['id', 'camera_id', 'bbox', 'detected_at']);
+            ->select(['id', 'camera_id', 'bbox', 'violation_type', 'detected_at']);
 
         if ($this->cameraId !== 'all') {
             $query->where('camera_id', $this->cameraId);
@@ -48,7 +48,13 @@ class ViolationHeatmap extends Component
             if (is_array($bbox) && isset($bbox['x1'], $bbox['x2'], $bbox['y1'], $bbox['y2'])) {
                 $cx = ($bbox['x1'] + $bbox['x2']) / 2;
                 $cy = ($bbox['y1'] + $bbox['y2']) / 2;
-                $points[] = ['x' => $cx, 'y' => $cy, 'camera_id' => $v->camera_id];
+                $points[] = [
+                    'x' => $cx,
+                    'y' => $cy,
+                    'camera_id' => $v->camera_id,
+                    'violation_type' => $v->violation_type,
+                    'detected_at' => $v->detected_at->format('Y-m-d H:i:s'),
+                ];
             }
         }
 

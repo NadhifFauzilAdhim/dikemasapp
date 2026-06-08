@@ -98,7 +98,7 @@
 
             <div>
                 <label class="mb-1 block text-xs font-medium text-slate-700 dark:text-slate-400">Min Confidence</label>
-                <input type="number" wire:model.live.debounce.500ms="minConfidence" min="0" max="1" step="0.1" placeholder="0.0" class="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                <input type="text" inputmode="decimal" wire:model.live.debounce.500ms="minConfidence" placeholder="e.g. 0.8 atau 80" class="w-32 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
             </div>
 
             <div class="flex items-center gap-2">
