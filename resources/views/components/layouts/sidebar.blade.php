@@ -32,6 +32,16 @@
             Violations
         </a>
 
+         <a wire:navigate href="{{ route('violations.heatmap') }}"
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors {{ request()->routeIs('violations.heatmap') ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400 dark:shadow-none' : 'text-slate-600 hover:bg-amber-50 hover:text-amber-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200' }}">
+            <svg class="h-5 w-5 {{ request()->routeIs('violations.heatmap') ? 'text-white dark:text-amber-400' : 'text-slate-400 dark:text-slate-500' }}"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            Heatmap
+        </a>
+
         <a wire:navigate href="{{ route('attendance.index') }}"
             class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors {{ request()->routeIs('attendance.*') ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400 dark:shadow-none' : 'text-slate-600 hover:bg-amber-50 hover:text-amber-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200' }}">
             <svg class="h-5 w-5 {{ request()->routeIs('attendance.*') ? 'text-white dark:text-amber-400' : 'text-slate-400 dark:text-slate-500' }}"
@@ -40,16 +50,6 @@
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             Absensi
-        </a>
-
-        <a wire:navigate href="{{ route('violations.heatmap') }}"
-            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors {{ request()->routeIs('violations.heatmap') ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400 dark:shadow-none' : 'text-slate-600 hover:bg-amber-50 hover:text-amber-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200' }}">
-            <svg class="h-5 w-5 {{ request()->routeIs('violations.heatmap') ? 'text-white dark:text-amber-400' : 'text-slate-400 dark:text-slate-500' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-            Heatmap
         </a>
 
         <a wire:navigate href="{{ route('counting.index') }}"

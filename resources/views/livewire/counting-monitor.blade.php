@@ -1,4 +1,35 @@
 <div wire:poll.3s>
+    {{-- Page Header --}}
+    <div class="relative mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80">
+        <!-- Ambient Glow Decoration inside Card -->
+        <div class="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-emerald-500/10 blur-xl dark:bg-emerald-500/5"></div>
+        
+        <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-start gap-4">
+                <!-- Icon badge -->
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002-2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Realtime Production Counting</h1>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Monitoring realtime hasil perhitungan produk produksi dan status device pemantau.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/60 px-3 py-1.5 text-xs font-medium text-slate-500 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400 sm:self-center self-start pl-16 sm:pl-3">
+                <span class="relative flex h-1.5 w-1.5">
+                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                </span>
+                Live status: 3s
+            </div>
+        </div>
+    </div>
+
     {{-- Summary Cards --}}
     <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {{-- Active Devices --}}
@@ -43,15 +74,8 @@
     </div>
 
     {{-- Auto-refresh indicator --}}
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-4">
         <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Device Sessions</h3>
-        <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-            <span class="relative flex h-2 w-2">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-            </span>
-            Auto-refresh: 3s
-        </div>
     </div>
 
     {{-- Device Cards Grid --}}

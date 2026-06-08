@@ -1,11 +1,33 @@
 <div>
-    {{-- Breadcrumb --}}
-    <div class="mb-6 flex items-center gap-2 text-sm">
-        <a wire:navigate href="{{ route('dashboard') }}" class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Dashboard</a>
-        <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <a wire:navigate href="{{ route('violations.index') }}" class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Violations</a>
-        <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <span class="text-slate-900 font-medium dark:text-slate-300">#{{ $violation->id }}</span>
+    <div class="relative mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80">
+        <!-- Ambient Glow Decoration inside Card -->
+        <div class="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-amber-500/10 blur-xl dark:bg-amber-500/5"></div>
+        
+        <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-start gap-4">
+                <!-- Icon badge -->
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Violation Detail</h1>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Detail informasi, visualisasi bounding box, dan metadata dari pelanggaran #{{ $violation->id }}.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2 text-sm sm:self-center self-start pl-16 sm:pl-0">
+                <a wire:navigate href="{{ route('dashboard') }}" class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Dashboard</a>
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <a wire:navigate href="{{ route('violations.index') }}" class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Violations</a>
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-slate-900 font-semibold dark:text-white">#{{ $violation->id }}</span>
+            </div>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">

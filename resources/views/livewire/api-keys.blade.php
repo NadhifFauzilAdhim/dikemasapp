@@ -1,6 +1,29 @@
 <div x-data="{ tab: 'keys' }">
     @section('title', 'API Keys & Documentation')
 
+    {{-- Page Header --}}
+    <div class="relative mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80">
+        <!-- Ambient Glow Decoration inside Card -->
+        <div class="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-amber-500/10 blur-xl dark:bg-amber-500/5"></div>
+        
+        <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-start gap-4">
+                <!-- Icon badge -->
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">API Keys & Documentation</h1>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Kelola kunci autentikasi API dan pelajari dokumentasi integrasi untuk device/kamera Anda.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mb-6 border-b border-slate-200 dark:border-slate-800">
         <nav class="-mb-px flex space-x-8">
             <button @click="tab = 'keys'" 

@@ -1,28 +1,48 @@
 <div>
     @section('title', 'Heatmap Analytics')
 
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Heatmap Analytics</h1>
-            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                Visualisasi titik pelanggaran terbanyak berbasis koordinat kamera (Hotzones).
-            </p>
-        </div>
+    <div class="relative mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80">
+        <!-- Ambient Glow Decoration inside Card -->
+        <div class="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-amber-500/10 blur-xl dark:bg-amber-500/5"></div>
         
-        <div class="flex flex-wrap items-center gap-3">
-            <select wire:model.live="period" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                <option value="today">Today</option>
-                <option value="this_week">This Week</option>
-                <option value="this_month">This Month</option>
-                <option value="all_time">All Time</option>
-            </select>
+        <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-start gap-4">
+                <!-- Icon badge -->
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Heatmap Analytics</h1>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        Visualisasi titik pelanggaran terbanyak berbasis koordinat kamera (Hotzones).
+                    </p>
+                </div>
+            </div>
             
-            <select wire:model.live="cameraId" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                <option value="all">All Cameras</option>
-                @foreach ($this->availableCameras as $cam)
-                    <option value="{{ $cam }}">{{ $cam }}</option>
-                @endforeach
-            </select>
+            <div class="flex flex-wrap items-center gap-3 sm:self-center self-start pl-16 sm:pl-0">
+                <div class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    Filters
+                </div>
+                <select wire:model.live="period" class="rounded-lg border border-slate-300 bg-white/50 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
+                    <option value="today">Today</option>
+                    <option value="this_week">This Week</option>
+                    <option value="this_month">This Month</option>
+                    <option value="all_time">All Time</option>
+                </select>
+                
+                <select wire:model.live="cameraId" class="rounded-lg border border-slate-300 bg-white/50 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
+                    <option value="all">All Cameras</option>
+                    @foreach ($this->availableCameras as $cam)
+                        <option value="{{ $cam }}">{{ $cam }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
     </div>
 

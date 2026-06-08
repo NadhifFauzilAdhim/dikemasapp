@@ -20,8 +20,25 @@
 </head>
 
 <body
-    class="min-h-screen bg-gradient-to-br from-slate-100 via-amber-50/20 to-slate-200/40 text-slate-800 antialiased transition-colors duration-300 dark:from-slate-950 dark:to-slate-900 dark:text-slate-200 border-t-4 border-amber-500">
-    <div class="flex h-screen overflow-hidden">
+    class="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200/50 text-slate-800 antialiased transition-colors duration-300 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-200 border-t-4 border-amber-500">
+    <!-- Ambient Graphic Background Elements -->
+    <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none">
+        <!-- Tech Dot Grid -->
+        <div class="absolute inset-0 opacity-[0.25] dark:opacity-[0.08]" 
+             style="background-image: radial-gradient(rgba(148, 163, 184, 0.5) 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+        
+        <!-- Subtle Top-Right Ambient Glow (Amber) -->
+        <div class="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-amber-400/20 to-amber-300/0 blur-[130px] dark:from-amber-500/10 dark:to-transparent"></div>
+        
+        <!-- Subtle Bottom-Left Ambient Glow (Blue/Slate) -->
+        <div class="absolute -bottom-[20%] -left-[10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-blue-400/10 to-indigo-300/0 blur-[130px] dark:from-blue-500/5 dark:to-transparent"></div>
+        
+        <!-- Faint HUD/Tech Accent Lines -->
+        <div class="absolute left-1/4 top-0 h-full w-px bg-gradient-to-b from-transparent via-slate-200/30 to-transparent dark:via-slate-800/10"></div>
+        <div class="absolute left-3/4 top-0 h-full w-px bg-gradient-to-b from-transparent via-slate-200/30 to-transparent dark:via-slate-800/10"></div>
+    </div>
+
+    <div class="relative z-10 flex h-screen overflow-hidden">
         {{-- Sidebar --}}
         <x-layouts.sidebar />
 
