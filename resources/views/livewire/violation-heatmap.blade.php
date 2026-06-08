@@ -51,10 +51,10 @@
         <div class="flex-grow rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 w-full xl:w-3/4">
             <div class="relative w-full overflow-hidden rounded-xl bg-slate-950 shadow-inner group" 
                  style="height: 600px; @if($this->bgImageUrl) background-image: url('{{ $this->bgImageUrl }}'); background-size: cover; background-position: center; @endif"
-                 x-data="heatmapComponent(@js($this->points))"
+                 x-data="heatmapComponent(@js($this->points), @js($this->cameraDimensions))"
                  x-init="initCanvas"
                  @resize.window="drawHeatmap"
-                 x-effect="points = @js($this->points); drawHeatmap()">
+                 x-effect="points = @js($this->points); dimensions = @js($this->cameraDimensions); drawHeatmap()">
                  
                 <!-- Dim overlay for background image to ensure heatmap visibility -->
                 @if($this->bgImageUrl)
@@ -124,8 +124,9 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('heatmapComponent', (initialPoints) => ({
+            Alpine.data('heatmapComponent', (initialPoints, initialDimensions) => ({
                 points: initialPoints,
+                dimensions: initialDimensions,
                 ctx: null,
                 initCanvas() {
                     this.ctx = this.$refs.canvas.getContext('2d');
@@ -143,17 +144,15 @@
                     
                     if (!this.points || this.points.length === 0) return;
 
-                    let maxX = 1280; 
-                    let maxY = 720;
+                    let maxX = this.dimensions ? this.dimensions.width : 1280; 
+                    let maxY = this.dimensions ? this.dimensions.height : 720;
                     
-                    const actualMaxX = Math.max(...this.points.map(p => p.x));
-                    const actualMaxY = Math.max(...this.points.map(p => p.y));
+                    // Fallback autoscaling if points exceed the provided dimensions
+                    const actualMaxX = Math.max(...this.points.map(p => p.x), 1);
+                    const actualMaxY = Math.max(...this.points.map(p => p.y), 1);
                     
-                    if (actualMaxX > maxX) maxX = actualMaxX;
-                    if (actualMaxY > maxY) maxY = actualMaxY;
-
-                    maxX *= 1.1;
-                    maxY *= 1.1;
+                    if (actualMaxX > maxX) maxX = actualMaxX * 1.05;
+                    if (actualMaxY > maxY) maxY = actualMaxY * 1.05;
 
                     // Set composition to create intensity
                     this.ctx.globalCompositeOperation = 'screen';

@@ -1,15 +1,60 @@
-<div>
-    <div class="relative mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80">
+<div x-data="{
+    showBoxes: true,
+    hoveredIndex: null,
+    filterType: 'all',
+    cameraWidth: {{ $violation->raw_payload['camera_width'] ?? 1280 }},
+    cameraHeight: {{ $violation->raw_payload['camera_height'] ?? 720 }},
+    isViolation(className) {
+        if (!className) return false;
+        const name = className.toLowerCase();
+        return name.includes('no-') || name.includes('violation');
+    },
+    getClassStyle(className) {
+        if (!className) return { border: 'border-slate-500 bg-slate-500/10 text-slate-500', bg: 'bg-slate-500', text: 'text-slate-100', label: 'Object' };
+        const name = className.toLowerCase();
+        if (name.includes('no-') || name.includes('violation')) {
+            return {
+                border: 'border-rose-500 bg-rose-500/15 text-rose-500',
+                bg: 'bg-rose-500',
+                text: 'text-rose-500',
+                labelText: 'text-white',
+                label: 'Violating'
+            };
+        } else if (name.includes('person')) {
+            return {
+                border: 'border-blue-500 bg-blue-500/10 text-blue-500',
+                bg: 'bg-blue-500',
+                text: 'text-blue-500',
+                labelText: 'text-white',
+                label: 'Person'
+            };
+        } else {
+            return {
+                border: 'border-emerald-500 bg-emerald-500/15 text-emerald-500',
+                bg: 'bg-emerald-500',
+                text: 'text-emerald-500',
+                labelText: 'text-white',
+                label: 'Compliant'
+            };
+        }
+    }
+}">
+    <div
+        class="relative mb-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-sm backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80">
         <!-- Ambient Glow Decoration inside Card -->
         <div class="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-amber-500/10 blur-xl dark:bg-amber-500/5"></div>
-        
+
         <div class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-start gap-4">
                 <!-- Icon badge -->
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+                <div
+                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                        </path>
                     </svg>
                 </div>
                 <div>
@@ -19,12 +64,29 @@
                     </p>
                 </div>
             </div>
-            
-            <div class="flex flex-wrap items-center gap-2 text-sm sm:self-center self-start pl-16 sm:pl-0">
-                <a wire:navigate href="{{ route('dashboard') }}" class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Dashboard</a>
-                <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                <a wire:navigate href="{{ route('violations.index') }}" class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Violations</a>
-                <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+
+            <div class="flex flex-wrap items-center gap-3 text-sm sm:self-center self-start pl-16 sm:pl-0">
+                <a href="{{ route('violations.report', $violation) }}" target="_blank"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-amber-505 dark:bg-amber-600 dark:hover:bg-amber-500">
+                    <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Export Report
+                </a>
+                <div class="h-5 w-px bg-slate-200 dark:bg-slate-800"></div>
+                <a wire:navigate href="{{ route('dashboard') }}"
+                    class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Dashboard</a>
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <a wire:navigate href="{{ route('violations.index') }}"
+                    class="text-slate-500 hover:text-slate-700 transition-colors dark:text-slate-500 dark:hover:text-slate-300">Violations</a>
+                <svg class="h-4 w-4 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
                 <span class="text-slate-900 font-semibold dark:text-white">#{{ $violation->id }}</span>
             </div>
         </div>
@@ -33,15 +95,114 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {{-- Image --}}
         <div class="lg:col-span-2">
-            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div class="border-b border-slate-200 px-5 py-3 dark:border-slate-800">
-                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Capture Image</h3>
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                x-cloak>
+                <div
+                    class="border-b border-slate-200 px-5 py-3 dark:border-slate-800 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Capture Image & Detections</h3>
+
+                    <!-- Controls -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <!-- Toggle Switch -->
+                        <label
+                            class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-400">
+                            <input type="checkbox" x-model="showBoxes" class="sr-only peer">
+                            <div
+                                class="relative w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-amber-500">
+                            </div>
+                            <span>Show Overlay</span>
+                        </label>
+
+                        <!-- Divider -->
+                        <div class="hidden sm:block h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
+
+                        <!-- Filter Segments -->
+                        <div class="inline-flex rounded-lg p-0.5 bg-slate-100 dark:bg-slate-800/80">
+                            <button @click="filterType = 'all'"
+                                :class="filterType === 'all' ?
+                                    'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white' :
+                                    'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'"
+                                class="px-2 py-1 text-[11px] font-semibold rounded-md transition-all">
+                                All
+                            </button>
+                            <button @click="filterType = 'violations'"
+                                :class="filterType === 'violations' ?
+                                    'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white' :
+                                    'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'"
+                                class="px-2 py-1 text-[11px] font-semibold rounded-md transition-all">
+                                Violations
+                            </button>
+                            <button @click="filterType = 'compliant'"
+                                :class="filterType === 'compliant' ?
+                                    'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white' :
+                                    'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'"
+                                class="px-2 py-1 text-[11px] font-semibold rounded-md transition-all">
+                                Safe
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="p-4">
                     @if ($violation->image_path)
-                        <img src="{{ $violation->imageUrl }}" alt="Violation #{{ $violation->id }} capture" class="w-full rounded-lg border border-slate-200 shadow-sm dark:border-slate-700">
+                        <div
+                            class="relative w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm dark:border-slate-700">
+                            <img src="{{ $violation->imageUrl }}" alt="Violation #{{ $violation->id }} capture"
+                                class="w-full h-auto block select-none">
+
+                            <!-- Bounding Boxes Overlay -->
+                            <div x-show="showBoxes" class="absolute inset-0 pointer-events-none select-none z-20">
+                                @php
+                                    $detections = $violation->all_detections ?? [
+                                        [
+                                            'class_name' => $violation->violation_type,
+                                            'class_id' => $violation->violation_class_id,
+                                            'confidence' => $violation->confidence,
+                                            'bbox' => $violation->bbox,
+                                        ],
+                                    ];
+                                    $cameraWidth = $violation->raw_payload['camera_width'] ?? 1280;
+                                    $cameraHeight = $violation->raw_payload['camera_height'] ?? 720;
+                                @endphp
+                                @foreach ($detections as $index => $det)
+                                    @if (isset($det['bbox']))
+                                        @php
+                                            $bbox = $det['bbox'];
+                                            $left = ($bbox['x1'] / $cameraWidth) * 100;
+                                            $top = ($bbox['y1'] / $cameraHeight) * 100;
+                                            $width = (($bbox['x2'] - $bbox['x1']) / $cameraWidth) * 100;
+                                            $height = (($bbox['y2'] - $bbox['y1']) / $cameraHeight) * 100;
+                                        @endphp
+                                        <div class="absolute border-2 pointer-events-auto transition-all duration-200 cursor-pointer"
+                                            :class="[
+                                                getClassStyle('{{ $det['class_name'] ?? '' }}').border,
+                                                (hoveredIndex === {{ $index }}) ?
+                                                'ring-4 ring-offset-2 ring-amber-400 z-30 scale-[1.02]' : 'z-20'
+                                            ]"
+                                            style="left: {{ $left }}%; top: {{ $top }}%; width: {{ $width }}%; height: {{ $height }}%;"
+                                            @mouseenter="hoveredIndex = {{ $index }}"
+                                            @mouseleave="hoveredIndex = null"
+                                            x-show="filterType === 'all' || 
+                                                   (filterType === 'violations' && isViolation('{{ $det['class_name'] ?? '' }}')) ||
+                                                   (filterType === 'compliant' && !isViolation('{{ $det['class_name'] ?? '' }}') && '{{ $det['class_name'] ?? '' }}' !== 'person')">
+                                            <!-- Floating Label Tooltip on Hover -->
+                                            <div class="absolute -top-6 left-0 px-2 py-0.5 rounded text-[10px] font-bold shadow-md whitespace-nowrap transition-opacity duration-150 pointer-events-none select-none"
+                                                :class="[
+                                                    getClassStyle('{{ $det['class_name'] ?? '' }}').bg,
+                                                    getClassStyle('{{ $det['class_name'] ?? '' }}').labelText,
+                                                    (hoveredIndex === {{ $index }}) ? 'opacity-100' :
+                                                    'opacity-0'
+                                                ]">
+                                                {{ $det['class_name'] ?? 'Object' }}
+                                                ({{ number_format(($det['confidence'] ?? 0) * 100, 1) }}%)
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
                     @else
-                        <div class="flex h-64 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900/50">
+                        <div
+                            class="flex h-64 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900/50">
                             No image available
                         </div>
                     @endif
@@ -50,14 +211,19 @@
 
             {{-- All Detections --}}
             @if ($violation->all_detections)
-                <div class="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div class="border-b border-slate-200 px-5 py-3 dark:border-slate-800">
-                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">All Detections in Frame ({{ count($violation->all_detections) }})</h3>
+                <div
+                    class="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <div
+                        class="border-b border-slate-200 px-5 py-3 dark:border-slate-800 flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">All Detections in Frame
+                            ({{ count($violation->all_detections) }})</h3>
+                        <span class="text-xs text-slate-400 dark:text-slate-500">Hover rows to highlight on image</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
-                                <tr class="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                                <tr
+                                    class="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400">
                                     <th class="px-5 py-2 text-left font-semibold">Class</th>
                                     <th class="px-5 py-2 text-left font-semibold">Confidence</th>
                                     <th class="px-5 py-2 text-left font-semibold">BBox</th>
@@ -66,21 +232,50 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                                @foreach ($violation->all_detections as $detection)
-                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                @foreach ($violation->all_detections as $index => $detection)
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                                        :class="[
+                                            (hoveredIndex === {{ $index }}) ?
+                                            'bg-amber-500/10 dark:bg-amber-500/20 font-semibold' : '',
+                                            (filterType === 'violations' && !isViolation(
+                                                '{{ $detection['class_name'] ?? '' }}')) ||
+                                            (filterType === 'compliant' && (isViolation(
+                                                    '{{ $detection['class_name'] ?? '' }}') ||
+                                                '{{ $detection['class_name'] ?? '' }}'
+                                                === 'person')) ? 'opacity-40' : ''
+                                        ]"
+                                        @mouseenter="hoveredIndex = {{ $index }}"
+                                        @mouseleave="hoveredIndex = null">
                                         <td class="px-5 py-2">
-                                            <span class="text-slate-900 font-medium dark:text-slate-300">{{ $detection['class_name'] ?? '—' }}</span>
-                                            <span class="ml-1 text-xs text-slate-500 dark:text-slate-500">({{ $detection['class_id'] ?? '—' }})</span>
+                                            <span class="rounded-full border px-2.5 py-0.5 text-xs font-semibold"
+                                                :class="[
+                                                    isViolation('{{ $detection['class_name'] ?? '' }}') ?
+                                                    'bg-rose-100 border-rose-200 text-rose-700 dark:bg-rose-500/10 dark:border-rose-500/20 dark:text-rose-400' :
+                                                    ('{{ $detection['class_name'] ?? '' }}'
+                                                        === 'person' ?
+                                                        'bg-blue-100 border-blue-200 text-blue-700 dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-400' :
+                                                        'bg-emerald-100 border-emerald-200 text-emerald-700 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400'
+                                                        )
+                                                ]">
+                                                {{ $detection['class_name'] ?? '—' }}
+                                            </span>
+                                            <span
+                                                class="ml-1 text-xs text-slate-500 dark:text-slate-500">({{ $detection['class_id'] ?? '—' }})</span>
                                         </td>
-                                        <td class="px-5 py-2 font-medium text-slate-700 dark:text-slate-300">{{ isset($detection['confidence']) ? number_format($detection['confidence'] * 100, 1) . '%' : '—' }}</td>
+                                        <td class="px-5 py-2 font-medium text-slate-700 dark:text-slate-300">
+                                            {{ isset($detection['confidence']) ? number_format($detection['confidence'] * 100, 1) . '%' : '—' }}
+                                        </td>
                                         <td class="px-5 py-2 font-mono text-xs text-slate-600 dark:text-slate-400">
                                             @if (isset($detection['bbox']))
-                                                [{{ $detection['bbox']['x1'] }}, {{ $detection['bbox']['y1'] }}] → [{{ $detection['bbox']['x2'] }}, {{ $detection['bbox']['y2'] }}]
+                                                [{{ $detection['bbox']['x1'] }}, {{ $detection['bbox']['y1'] }}] →
+                                                [{{ $detection['bbox']['x2'] }}, {{ $detection['bbox']['y2'] }}]
                                             @else
                                                 —
                                             @endif
                                         </td>
-                                        <td class="px-5 py-2 text-slate-600 dark:text-slate-400">{{ isset($detection['area']) ? number_format($detection['area']) : '—' }}</td>
+                                        <td class="px-5 py-2 text-slate-600 dark:text-slate-400">
+                                            {{ isset($detection['area']) ? number_format($detection['area']) : '—' }}
+                                        </td>
                                         <td class="px-5 py-2 font-mono text-xs text-slate-600 dark:text-slate-400">
                                             @if (isset($detection['center']))
                                                 ({{ $detection['center']['x'] }}, {{ $detection['center']['y'] }})
@@ -100,7 +295,8 @@
         {{-- Sidebar Metadata --}}
         <div class="space-y-4">
             {{-- Violation Info --}}
-            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div
+                class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                 <h3 class="mb-4 text-sm font-semibold text-slate-900 dark:text-white">Violation Details</h3>
 
                 <dl class="space-y-3">
@@ -108,32 +304,40 @@
                         <dt class="text-xs text-slate-500 dark:text-slate-400">Type</dt>
                         <dd class="mt-1">
                             @php
-                                $badgeClasses = match($violation->violation_type) {
-                                    'NO-Hardhat' => 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-500 dark:border-amber-500/20',
-                                    'NO-Mask' => 'bg-red-100 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-500 dark:border-red-500/20',
-                                    'NO-Safety Vest' => 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-500 dark:border-orange-500/20',
-                                    default => 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-500/10 dark:text-slate-500 dark:border-slate-500/20',
+                                $badgeClasses = match ($violation->violation_type) {
+                                    'NO-Hardhat'
+                                        => 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-500 dark:border-amber-500/20',
+                                    'NO-Mask'
+                                        => 'bg-red-100 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-500 dark:border-red-500/20',
+                                    'NO-Safety Vest'
+                                        => 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-500 dark:border-orange-500/20',
+                                    default
+                                        => 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-500/10 dark:text-slate-500 dark:border-slate-500/20',
                                 };
                             @endphp
-                            <span class="rounded-full border px-2.5 py-1 text-xs font-medium {{ $badgeClasses }}">{{ $violation->violation_type }}</span>
+                            <span
+                                class="rounded-full border px-2.5 py-1 text-xs font-medium {{ $badgeClasses }}">{{ $violation->violation_type }}</span>
                         </dd>
                     </div>
 
                     <div>
                         <dt class="text-xs text-slate-500 dark:text-slate-400">Class ID</dt>
-                        <dd class="mt-0.5 font-mono text-sm font-medium text-slate-900 dark:text-white">{{ $violation->violation_class_id }}</dd>
+                        <dd class="mt-0.5 font-mono text-sm font-medium text-slate-900 dark:text-white">
+                            {{ $violation->violation_class_id }}</dd>
                     </div>
 
                     <div>
                         <dt class="text-xs text-slate-500 dark:text-slate-400">Camera</dt>
                         <dd class="mt-1">
-                            <span class="rounded-md bg-slate-100 px-2 py-1 text-xs font-mono font-medium text-slate-600 dark:bg-slate-800 dark:text-cyan-400">{{ $violation->camera_id }}</span>
+                            <span
+                                class="rounded-md bg-slate-100 px-2 py-1 text-xs font-mono font-medium text-slate-600 dark:bg-slate-800 dark:text-cyan-400">{{ $violation->camera_id }}</span>
                         </dd>
                     </div>
 
                     <div>
                         <dt class="text-xs text-slate-500 dark:text-slate-400">Detected At</dt>
-                        <dd class="mt-0.5 text-sm font-medium text-slate-900 dark:text-white">{{ $violation->detected_at->format('d M Y, H:i:s') }}</dd>
+                        <dd class="mt-0.5 text-sm font-medium text-slate-900 dark:text-white">
+                            {{ $violation->detected_at->format('d M Y, H:i:s') }}</dd>
                     </div>
 
                     <div>
@@ -141,44 +345,63 @@
                         <dd class="mt-1">
                             <div class="flex items-center gap-2">
                                 <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                                    <div class="h-full rounded-full {{ $violation->confidence >= 0.8 ? 'bg-emerald-500' : ($violation->confidence >= 0.6 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $violation->confidence * 100 }}%"></div>
+                                    <div class="h-full rounded-full {{ $violation->confidence >= 0.8 ? 'bg-emerald-500' : ($violation->confidence >= 0.6 ? 'bg-amber-500' : 'bg-red-500') }}"
+                                        style="width: {{ $violation->confidence * 100 }}%"></div>
                                 </div>
-                                <span class="text-sm font-bold text-slate-900 dark:text-white">{{ number_format($violation->confidence * 100, 1) }}%</span>
+                                <span
+                                    class="text-sm font-bold text-slate-900 dark:text-white">{{ number_format($violation->confidence * 100, 1) }}%</span>
                             </div>
                         </dd>
                     </div>
 
                     <div>
                         <dt class="text-xs text-slate-500 dark:text-slate-400">Person Count</dt>
-                        <dd class="mt-0.5 text-sm font-medium text-slate-900 dark:text-white">{{ $violation->person_count }}</dd>
+                        <dd class="mt-0.5 text-sm font-medium text-slate-900 dark:text-white">
+                            {{ $violation->person_count }}</dd>
                     </div>
 
                     @if ($violation->frame_id)
                         <div>
                             <dt class="text-xs text-slate-500 dark:text-slate-400">Frame ID</dt>
-                            <dd class="mt-0.5 font-mono text-sm text-slate-700 dark:text-slate-300">{{ $violation->frame_id }}</dd>
+                            <dd class="mt-0.5 font-mono text-sm text-slate-700 dark:text-slate-300">
+                                {{ $violation->frame_id }}</dd>
                         </div>
                     @endif
 
                     @if ($violation->inference_time_ms)
                         <div>
                             <dt class="text-xs text-slate-500 dark:text-slate-400">Inference Time</dt>
-                            <dd class="mt-0.5 text-sm text-slate-700 dark:text-slate-300">{{ number_format($violation->inference_time_ms, 2) }} ms</dd>
+                            <dd class="mt-0.5 text-sm text-slate-700 dark:text-slate-300">
+                                {{ number_format($violation->inference_time_ms, 2) }} ms</dd>
                         </div>
                     @endif
 
                     <div>
                         <dt class="text-xs text-slate-500 dark:text-slate-400">Record Created</dt>
-                        <dd class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{{ $violation->created_at->format('d M Y, H:i:s') }}</dd>
+                        <dd class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
+                            {{ $violation->created_at->format('d M Y, H:i:s') }}</dd>
                     </div>
                 </dl>
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ route('violations.report', $violation) }}" target="_blank"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-amber-600 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all hover:bg-amber-505 dark:bg-amber-600 dark:hover:bg-amber-500">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Export Report (PDF)
+                    </a>
+                    <a href="{{ route('violations.index') }}"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/80">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back
+                    </a>
+                </div>
             </div>
-
-            {{-- Actions --}}
-            <a wire:navigate href="{{ route('violations.index') }}" class="flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Back to List
-            </a>
         </div>
     </div>
 </div>

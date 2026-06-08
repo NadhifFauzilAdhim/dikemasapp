@@ -60,6 +60,32 @@ class ViolationHeatmap extends Component
         return PpeViolation::select('camera_id')->distinct()->pluck('camera_id')->filter()->values()->toArray();
     }
 
+    public function getCameraDimensionsProperty(): array
+    {
+        $query = PpeViolation::query()->whereNotNull('raw_payload');
+
+        if ($this->cameraId !== 'all') {
+            $query->where('camera_id', $this->cameraId);
+        }
+
+        $latest = $query->latest('detected_at')->first(['raw_payload']);
+
+        $width = 1280;
+        $height = 720;
+
+        if ($latest && is_array($latest->raw_payload)) {
+            $payload = $latest->raw_payload;
+            if (isset($payload['camera_width']) && $payload['camera_width'] > 0) {
+                $width = (int) $payload['camera_width'];
+            }
+            if (isset($payload['camera_height']) && $payload['camera_height'] > 0) {
+                $height = (int) $payload['camera_height'];
+            }
+        }
+
+        return ['width' => $width, 'height' => $height];
+    }
+
     public function getBgImageUrlProperty(): ?string
     {
         $query = PpeViolation::query()->whereNotNull('image_path')->latest('detected_at');

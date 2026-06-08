@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\ViolationReportController;
 use App\Livewire\ApiKeys;
 use App\Livewire\Attendance\EmployeeList;
 use App\Livewire\Attendance\Enrollment;
@@ -20,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/violations', ViolationList::class)->name('violations.index');
     Route::get('/violations/heatmap', ViolationHeatmap::class)->name('violations.heatmap');
     Route::get('/violations/{violation}', ViolationDetail::class)->name('violations.show');
+    Route::get('/violations/{violation}/report', [ViolationReportController::class, 'show'])->name('violations.report');
     Route::get('/counting', CountingMonitor::class)->name('counting.index');
     Route::get('/api-keys', ApiKeys::class)->name('api-keys.index');
 
