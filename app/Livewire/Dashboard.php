@@ -50,7 +50,7 @@ class Dashboard extends Component
     public function averageConfidence(): float
     {
         return round(
-            (float) PpeViolation::today()
+            (float) PpeViolation::query()
                 ->when($this->cameraFilter, fn ($q) => $q->byCamera($this->cameraFilter))
                 ->when($this->typeFilter, fn ($q) => $q->byType($this->typeFilter))
                 ->avg('confidence'),

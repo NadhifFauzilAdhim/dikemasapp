@@ -24,16 +24,6 @@
         </div>
     @endif
 
-    <style>
-        @keyframes scan {
-            0%, 100% { top: 8%; opacity: 0.8; }
-            50% { top: 88%; opacity: 0.8; }
-        }
-        .animate-scan {
-            position: absolute;
-            animation: scan 2.5s ease-in-out infinite;
-        }
-    </style>
 
     <div class="relative overflow-hidden rounded-xl border border-slate-200/80 bg-white/80 p-6 shadow-md backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-900/80"
         x-data="{ 
@@ -88,14 +78,8 @@
                     <div x-show="isCapturing" class="absolute bottom-6 left-6 h-6 w-6 border-b-2 border-l-2 border-amber-500 pointer-events-none"></div>
                     <div x-show="isCapturing" class="absolute bottom-6 right-6 h-6 w-6 border-b-2 border-r-2 border-amber-500 pointer-events-none"></div>
                     
-                    <!-- HUD Scan Line Animation -->
-                    <div x-show="isCapturing" class="animate-scan left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent shadow-[0_0_8px_#f59e0b] pointer-events-none"></div>
-                    
-                    <!-- HUD Status Badge -->
-                    <div x-show="isCapturing" class="absolute top-6 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2.5 py-1 text-[10px] font-mono tracking-widest text-amber-500 border border-amber-500/20 backdrop-blur-sm pointer-events-none flex items-center gap-1.5 uppercase">
-                        <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping"></span>
-                        Ready to Scan
-                    </div>
+
+
                     
                     <div x-show="isCapturing" class="absolute bottom-4 left-0 right-0 flex justify-center">
                         <button type="button" @click="capture()" class="rounded-full bg-amber-500 p-4 text-white shadow-lg hover:bg-amber-600 focus:outline-none focus:ring-4 focus:ring-amber-500/50">
